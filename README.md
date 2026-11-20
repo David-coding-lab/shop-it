@@ -37,7 +37,7 @@ Enforced server-side in a database function (`transition_booking`) with an audit
 
 ## Tech stack
 
-- **Expo SDK 54** (React Native 0.81) with **Expo Router v6** — typed routes, file-based navigation, `Stack.Protected` auth guards
+- **Expo SDK 58** (React Native 0.88) with **Expo Router v58** — typed routes, file-based navigation, `Stack.Protected` auth guards
 - **Supabase** — Postgres with **RLS** everywhere, Auth (email + password, SecureStore session), PostGIS, Edge Functions (payment webhook, push sender), Database Webhooks
 - **Paystack** — Nigerian payments in naira (NGN); checkout via in-app WebView, payment confirmed by a signature-verified webhook, never by the client redirect
 - **NativeWind v4** (Tailwind classes) + custom **Shop-it design system** (amethyst/violet brand palette, Plus Jakarta Sans)
