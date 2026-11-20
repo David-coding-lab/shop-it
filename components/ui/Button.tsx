@@ -13,7 +13,7 @@ type ButtonProps = Omit<PressableProps, "children"> & {
 };
 
 const containerVariants: Record<Variant, string> = {
-  primary: "bg-indigo-600 active:bg-indigo-700",
+  primary: "bg-brand-600 active:bg-brand-700",
   outline:
     "border border-neutral-300 dark:border-neutral-700 bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
   ghost: "bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
@@ -23,14 +23,14 @@ const containerVariants: Record<Variant, string> = {
 const textVariants: Record<Variant, string> = {
   primary: "text-white",
   outline: "text-neutral-900 dark:text-neutral-100",
-  ghost: "text-indigo-600 dark:text-indigo-400",
+  ghost: "text-brand-600 dark:text-brand-300",
   danger: "text-white",
 };
 
 const spinnerColors: Record<Variant, string> = {
   primary: "#ffffff",
-  outline: "#4f46e5",
-  ghost: "#4f46e5",
+  outline: "#7b2cbf",
+  ghost: "#7b2cbf",
   danger: "#ffffff",
 };
 
@@ -58,7 +58,7 @@ export function Button({
       {loading ? (
         <ActivityIndicator color={spinnerColors[variant]} />
       ) : (
-        <Text className={cn("text-base font-semibold", textVariants[variant])}>{title}</Text>
+        <Text className={cn("text-base font-jakarta-semibold", textVariants[variant])}>{title}</Text>
       )}
     </Pressable>
   );

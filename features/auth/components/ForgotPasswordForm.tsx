@@ -47,7 +47,7 @@ export function ForgotPasswordForm() {
         <Text className="text-center text-sm text-emerald-700 dark:text-emerald-300">
           If an account exists for {email.trim()}, you will receive a password reset email shortly.
         </Text>
-        <Link href="/sign-in" className="font-semibold text-indigo-600 dark:text-indigo-400">
+        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
           Back to sign in
         </Link>
       </View>
@@ -78,7 +78,7 @@ export function ForgotPasswordForm() {
 
       <View className="flex-row justify-center gap-1">
         <Text className="text-neutral-500 dark:text-neutral-400">Remembered it?</Text>
-        <Link href="/sign-in" className="font-semibold text-indigo-600 dark:text-indigo-400">
+        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
           Sign in
         </Link>
       </View>

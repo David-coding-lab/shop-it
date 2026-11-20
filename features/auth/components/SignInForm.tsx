@@ -56,7 +56,7 @@ export function SignInForm() {
       />
 
       <View className="items-end">
-        <Link href="/forgot-password" className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+        <Link href="/forgot-password" className="text-sm font-medium text-brand-600 dark:text-brand-300">
           Forgot password?
         </Link>
       </View>
@@ -71,7 +71,7 @@ export function SignInForm() {
 
       <View className="flex-row justify-center gap-1">
         <Text className="text-neutral-500 dark:text-neutral-400">Need an account?</Text>
-        <Link href="/sign-up" className="font-semibold text-indigo-600 dark:text-indigo-400">
+        <Link href="/sign-up" className="font-semibold text-brand-600 dark:text-brand-300">
           Sign up
         </Link>
       </View>

@@ -7,7 +7,7 @@ export function Card({ className, ...viewProps }: ViewProps & { className?: stri
   return (
     <View
       className={cn(
-        "rounded-2xl border border-neutral-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-900",
+        "rounded-2xl border border-[#eae5f4] bg-white p-5 dark:border-brand-800 dark:bg-brand-900",
         className,
       )}
       {...viewProps}

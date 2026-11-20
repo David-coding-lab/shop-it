@@ -1,5 +1,6 @@
 import { Text, View } from "react-native";
 import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Screen } from "@/components/layout/Screen";
 import { Avatar } from "@/components/ui/Avatar";
@@ -20,7 +21,7 @@ export default function HomeScreen() {
       <View className="flex-1 justify-center gap-8">
         <View className="items-center gap-3">
           <Avatar name={profile?.full_name} email={user?.email} size={88} />
-          <Text className="text-center text-2xl font-bold text-neutral-900 dark:text-neutral-50">
+          <Text className="text-center text-2xl font-jakarta-bold text-neutral-900 dark:text-neutral-50">
             Hi, {displayName}
           </Text>
           <Text className="text-center text-neutral-500 dark:text-neutral-400">
@@ -28,13 +29,16 @@ export default function HomeScreen() {
           </Text>
         </View>
 
-        <Card className="gap-3">
-          <Text className="text-base font-semibold text-neutral-900 dark:text-neutral-50">
-            Your starter is ready
+        <Card className="gap-4">
+          <View className="h-12 w-12 items-center justify-center rounded-2xl bg-brand-600">
+            <Ionicons name="storefront" size={24} color="#ffffff" />
+          </View>
+          <Text className="text-base font-jakarta-bold text-neutral-900 dark:text-neutral-50">
+            Welcome to Shop-it
           </Text>
           <Text className="text-sm leading-5 text-neutral-500 dark:text-neutral-400">
-            Auth, protected routes and a synced profile are wired up. Start building your
-            screens under app/(app) and your features in features/.
+            Soon you&apos;ll be able to find trusted cleaners, tutors, electricians and more near
+            you, book them in minutes, pay securely, and only release payment when the job is done.
           </Text>
         </Card>
 

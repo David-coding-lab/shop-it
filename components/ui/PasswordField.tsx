@@ -25,11 +25,11 @@ export function PasswordField({
 
   return (
     <View className="w-full gap-1.5">
-      <Text className="text-sm font-medium text-neutral-700 dark:text-neutral-300">{label}</Text>
+      <Text className="text-sm font-jakarta-medium text-neutral-700 dark:text-neutral-300">{label}</Text>
       <View
         className={cn(
-          "h-14 flex-row items-center rounded-2xl border bg-white dark:bg-neutral-900",
-          error ? "border-red-500" : "border-neutral-300 dark:border-neutral-700",
+          "h-14 flex-row items-center rounded-2xl border bg-white dark:border-brand-800 dark:bg-brand-900",
+          error ? "border-red-500" : "border-neutral-300 dark:border-brand-800",
         )}
       >
         <TextInput
@@ -40,7 +40,7 @@ export function PasswordField({
           secureTextEntry={!isVisible}
           autoCapitalize="none"
           autoComplete={autoComplete}
-          className="h-full flex-1 px-4 text-base text-neutral-900 dark:text-neutral-100"
+          className="h-full flex-1 px-4 font-jakarta text-base text-neutral-900 dark:text-neutral-100"
         />
         <Pressable
           onPress={() => setIsVisible((current) => !current)}

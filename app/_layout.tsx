@@ -4,6 +4,14 @@ import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import * as SplashScreen from "expo-splash-screen";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  useFonts,
+  PlusJakartaSans_400Regular,
+  PlusJakartaSans_500Medium,
+  PlusJakartaSans_600SemiBold,
+  PlusJakartaSans_700Bold,
+  PlusJakartaSans_800ExtraBold,
+} from "@expo-google-fonts/plus-jakarta-sans";
 
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { useAuth } from "@/features/auth/use-auth";
@@ -14,14 +22,22 @@ void SplashScreen.preventAutoHideAsync().catch(() => {
 
 function RootNavigator() {
   const { session, isLoading } = useAuth();
+  const [fontsLoaded] = useFonts({
+    PlusJakartaSans_400Regular,
+    PlusJakartaSans_500Medium,
+    PlusJakartaSans_600SemiBold,
+    PlusJakartaSans_700Bold,
+    PlusJakartaSans_800ExtraBold,
+  });
+  const isReady = !isLoading && fontsLoaded;
 
   useEffect(() => {
-    if (!isLoading) {
+    if (isReady) {
       void SplashScreen.hideAsync().catch(() => undefined);
     }
-  }, [isLoading]);
+  }, [isReady]);
 
-  if (isLoading) {
+  if (!isReady) {
     return null;
   }
 

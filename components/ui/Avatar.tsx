@@ -20,7 +20,7 @@ function getInitials(name?: string | null, email?: string | null): string {
 export function Avatar({ name, email, size = 64 }: AvatarProps) {
   return (
     <View
-      className="items-center justify-center bg-indigo-600"
+      className="items-center justify-center bg-brand-600"
       style={{ width: size, height: size, borderRadius: size / 2 }}
     >
       <Text

@@ -7,7 +7,30 @@ module.exports = {
   ],
   presets: [require("nativewind/preset")],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        brand: {
+          50: "#faf7fe",
+          100: "#f3ecfc",
+          200: "#e3d0f7",
+          300: "#e0aaff",
+          400: "#c77dff",
+          500: "#9d4edd",
+          600: "#7b2cbf",
+          700: "#5a189a",
+          800: "#3c096c",
+          900: "#240046",
+          950: "#10002b",
+        },
+      },
+      fontFamily: {
+        jakarta: ["PlusJakartaSans_400Regular"],
+        "jakarta-medium": ["PlusJakartaSans_500Medium"],
+        "jakarta-semibold": ["PlusJakartaSans_600SemiBold"],
+        "jakarta-bold": ["PlusJakartaSans_700Bold"],
+        "jakarta-extrabold": ["PlusJakartaSans_800ExtraBold"],
+      },
+    },
   },
   plugins: [],
 };

@@ -56,7 +56,7 @@ export function SignUpForm() {
         <Text className="text-center text-sm text-emerald-700 dark:text-emerald-300">
           We sent a confirmation link to {email.trim()}. Confirm it, then sign in.
         </Text>
-        <Link href="/sign-in" className="font-semibold text-indigo-600 dark:text-indigo-400">
+        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
           Back to sign in
         </Link>
       </View>
@@ -111,7 +111,7 @@ export function SignUpForm() {
 
       <View className="flex-row justify-center gap-1">
         <Text className="text-neutral-500 dark:text-neutral-400">Already have an account?</Text>
-        <Link href="/sign-in" className="font-semibold text-indigo-600 dark:text-indigo-400">
+        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
           Sign in
         </Link>
       </View>
