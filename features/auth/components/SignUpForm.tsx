@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
-import { PasswordField } from "@/components/ui/PasswordField";
 import { useAuth } from "@/features/auth/use-auth";
 import { isValidEmail, validatePassword } from "@/lib/validation";
 
@@ -50,13 +49,13 @@ export function SignUpForm() {
     return (
       <View className="items-center gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900 dark:bg-emerald-950">
         <Ionicons name="mail-outline" size={40} color="#059669" />
-        <Text className="text-center text-lg font-semibold text-emerald-800 dark:text-emerald-200">
+        <Text className="text-center text-lg font-jakarta-semibold text-emerald-800 dark:text-emerald-200">
           Check your email
         </Text>
-        <Text className="text-center text-sm text-emerald-700 dark:text-emerald-300">
+        <Text className="text-center text-sm font-jakarta text-emerald-700 dark:text-emerald-300">
           We sent a confirmation link to {email.trim()}. Confirm it, then sign in.
         </Text>
-        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
+        <Link href="/sign-in" className="font-jakarta-semibold text-brand-600 dark:text-brand-300">
           Back to sign in
         </Link>
       </View>
@@ -85,33 +84,41 @@ export function SignUpForm() {
         autoCapitalize="none"
         textContentType="emailAddress"
       />
-      <PasswordField
+      <TextField
         label="Password"
         value={password}
         onChangeText={setPassword}
         error={fieldErrors.password}
+        placeholder="At least 8 characters"
         autoComplete="new-password"
+        secureTextEntry
       />
-      <PasswordField
+      <TextField
         label="Confirm password"
         value={confirm}
         onChangeText={setConfirm}
         error={fieldErrors.confirm}
-        autoComplete="new-password"
         placeholder="Repeat your password"
+        autoComplete="new-password"
+        secureTextEntry
       />
 
       {authError ? (
-        <Text className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-          {authError}
-        </Text>
+        <View className="flex-row items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 dark:bg-red-950">
+          <Ionicons name="alert-circle" size={18} color="#dc2626" />
+          <Text className="flex-1 text-sm font-jakarta-medium text-red-700 dark:text-red-300">
+            {authError}
+          </Text>
+        </View>
       ) : null}
 
       <Button title="Create account" onPress={handleSubmit} loading={isSubmitting} />
 
       <View className="flex-row justify-center gap-1">
-        <Text className="text-neutral-500 dark:text-neutral-400">Already have an account?</Text>
-        <Link href="/sign-in" className="font-semibold text-brand-600 dark:text-brand-300">
+        <Text className="font-jakarta text-neutral-500 dark:text-neutral-400">
+          Already have an account?
+        </Text>
+        <Link href="/sign-in" className="font-jakarta-semibold text-brand-600 dark:text-brand-300">
           Sign in
         </Link>
       </View>

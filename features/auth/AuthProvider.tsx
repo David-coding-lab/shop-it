@@ -12,11 +12,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
 
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setSession(data.session);
-      setIsLoading(false);
-    });
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (!mounted) return;
+        setSession(data.session);
+        setIsLoading(false);
+      })
+      .catch((error: unknown) => {
+        console.warn("[auth] getSession failed", error);
+        if (!mounted) return;
+        setSession(null);
+        setIsLoading(false);
+      });
 
     const {
       data: { subscription },

@@ -15,13 +15,16 @@ import {
 
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { useAuth } from "@/features/auth/use-auth";
+import { OnboardingProvider } from "@/features/onboarding/OnboardingProvider";
+import { useOnboarding } from "@/features/onboarding/use-onboarding";
 
 void SplashScreen.preventAutoHideAsync().catch(() => {
   // Splash screen already hidden; ignore.
 });
 
 function RootNavigator() {
-  const { session, isLoading } = useAuth();
+  const { session, isLoading: isAuthLoading } = useAuth();
+  const { hasSeenWelcome, isLoading: isOnboardingLoading } = useOnboarding();
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,
     PlusJakartaSans_500Medium,
@@ -29,7 +32,7 @@ function RootNavigator() {
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
   });
-  const isReady = !isLoading && fontsLoaded;
+  const isReady = !isAuthLoading && !isOnboardingLoading && fontsLoaded;
 
   useEffect(() => {
     if (isReady) {
@@ -43,11 +46,15 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={Boolean(session)}>
-        <Stack.Screen name="(app)" />
+      <Stack.Screen name="index" />
+      <Stack.Protected guard={isReady && !session && !hasSeenWelcome}>
+        <Stack.Screen name="welcome" />
       </Stack.Protected>
-      <Stack.Protected guard={!session}>
+      <Stack.Protected guard={isReady && !session && hasSeenWelcome}>
         <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+      <Stack.Protected guard={isReady && Boolean(session)}>
+        <Stack.Screen name="(app)" />
       </Stack.Protected>
     </Stack>
   );
@@ -57,8 +64,10 @@ export default function RootLayout() {
   return (
     <SafeAreaProvider>
       <AuthProvider>
-        <StatusBar style="auto" />
-        <RootNavigator />
+        <OnboardingProvider>
+          <StatusBar style="auto" />
+          <RootNavigator />
+        </OnboardingProvider>
       </AuthProvider>
     </SafeAreaProvider>
   );

@@ -35,7 +35,7 @@ export function EmptyState({
         </Text>
       ) : null}
       {actionLabel && onAction ? (
-        <Button title={actionLabel} onPress={onAction} variant="outline" className="mt-2 h-12 px-6" />
+        <Button title={actionLabel} onPress={onAction} variant="secondary" />
       ) : null}
     </View>
   );

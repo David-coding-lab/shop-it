@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Text, View } from "react-native";
 import { Link } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
 
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
-import { PasswordField } from "@/components/ui/PasswordField";
 import { useAuth } from "@/features/auth/use-auth";
 import { isValidEmail } from "@/lib/validation";
 
@@ -47,31 +47,51 @@ export function SignInForm() {
         autoCapitalize="none"
         textContentType="emailAddress"
       />
-      <PasswordField
+      <TextField
         label="Password"
         value={password}
         onChangeText={setPassword}
         error={passwordError}
+        placeholder="Enter your password"
         autoComplete="password"
+        secureTextEntry
       />
 
-      <View className="items-end">
-        <Link href="/forgot-password" className="text-sm font-medium text-brand-600 dark:text-brand-300">
+      <View className="-mt-1 items-end">
+        <Link
+          href="/forgot-password"
+          className="text-sm font-jakarta-semibold text-brand-600 dark:text-brand-300"
+        >
           Forgot password?
         </Link>
       </View>
 
       {authError ? (
-        <Text className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-          {authError}
-        </Text>
+        <View className="flex-row items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 dark:bg-red-950">
+          <Ionicons name="alert-circle" size={18} color="#dc2626" />
+          <Text className="flex-1 text-sm font-jakarta-medium text-red-700 dark:text-red-300">
+            {authError}
+          </Text>
+        </View>
       ) : null}
 
       <Button title="Sign in" onPress={handleSubmit} loading={isSubmitting} />
 
+      <View className="flex-row items-center justify-center gap-1.5">
+        <Ionicons name="shield-checkmark" size={15} color="#7b2cbf" />
+        <Text className="text-xs font-jakarta text-neutral-500 dark:text-neutral-400">
+          Verified, licensed and insured pros
+        </Text>
+      </View>
+
       <View className="flex-row justify-center gap-1">
-        <Text className="text-neutral-500 dark:text-neutral-400">Need an account?</Text>
-        <Link href="/sign-up" className="font-semibold text-brand-600 dark:text-brand-300">
+        <Text className="font-jakarta text-neutral-500 dark:text-neutral-400">
+          Need an account?
+        </Text>
+        <Link
+          href="/sign-up"
+          className="font-jakarta-semibold text-brand-600 dark:text-brand-300"
+        >
           Sign up
         </Link>
       </View>

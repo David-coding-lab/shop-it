@@ -1,64 +1,46 @@
 import { ActivityIndicator, Pressable, Text } from "react-native";
-import type { PressableProps } from "react-native";
 
-import { cn } from "@/lib/cn";
-
-type Variant = "primary" | "outline" | "ghost" | "danger";
-
-type ButtonProps = Omit<PressableProps, "children"> & {
+type ButtonProps = {
   title: string;
-  variant?: Variant;
+  onPress: () => void;
   loading?: boolean;
-  className?: string;
+  disabled?: boolean;
+  variant?: "primary" | "secondary";
 };
 
-const containerVariants: Record<Variant, string> = {
+const containerStyles = {
   primary: "bg-brand-600 active:bg-brand-700",
-  outline:
-    "border border-neutral-300 dark:border-neutral-700 bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
-  ghost: "bg-transparent active:bg-neutral-100 dark:active:bg-neutral-800",
-  danger: "bg-red-600 active:bg-red-700",
-};
+  secondary: "border border-brand-200 bg-brand-50 active:bg-brand-100 dark:border-neutral-800 dark:bg-neutral-900",
+} as const;
 
-const textVariants: Record<Variant, string> = {
+const textStyles = {
   primary: "text-white",
-  outline: "text-neutral-900 dark:text-neutral-100",
-  ghost: "text-brand-600 dark:text-brand-300",
-  danger: "text-white",
-};
-
-const spinnerColors: Record<Variant, string> = {
-  primary: "#ffffff",
-  outline: "#7b2cbf",
-  ghost: "#7b2cbf",
-  danger: "#ffffff",
-};
+  secondary: "text-brand-700 dark:text-brand-200",
+} as const;
 
 export function Button({
   title,
-  variant = "primary",
+  onPress,
   loading = false,
-  disabled,
-  className,
-  ...pressableProps
+  disabled = false,
+  variant = "primary",
 }: ButtonProps) {
-  const isDisabled = disabled || loading;
+  const inactive = disabled || loading;
 
   return (
     <Pressable
-      {...pressableProps}
-      disabled={isDisabled}
-      className={cn(
-        "h-14 flex-row items-center justify-center rounded-2xl px-4",
-        containerVariants[variant],
-        isDisabled && "opacity-50",
-        className,
-      )}
+      onPress={onPress}
+      disabled={inactive}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: inactive, busy: loading }}
+      className={`h-[52px] flex-row items-center justify-center gap-2 rounded-2xl ${containerStyles[variant]} ${
+        inactive ? "opacity-70" : ""
+      }`}
     >
       {loading ? (
-        <ActivityIndicator color={spinnerColors[variant]} />
+        <ActivityIndicator color={variant === "primary" ? "#ffffff" : "#7b2cbf"} />
       ) : (
-        <Text className={cn("text-base font-jakarta-semibold", textVariants[variant])}>{title}</Text>
+        <Text className={`text-base font-jakarta-semibold ${textStyles[variant]}`}>{title}</Text>
       )}
     </Pressable>
   );

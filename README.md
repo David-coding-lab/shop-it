@@ -55,7 +55,8 @@ components/
   marketplace/          # ProviderCard, ServiceRow, BookingTimeline, EmptyState
   layout/               # Screen, KeyboardScroll
 features/               # One module per domain (auth, profile, …)
-  auth/                 # AuthProvider, use-auth, sign-in/up/forgot forms, AuthHeader
+  auth/                 # AuthProvider, use-auth (auth screens being rebuilt)
+  onboarding/           # WelcomeScreen, WaveBackground, ContinueArrow
   profile/              # useProfile, ProfileForm, ProfileHeader
 lib/
   supabase.ts           # Typed client singleton (SecureStore session, AppState refresh)

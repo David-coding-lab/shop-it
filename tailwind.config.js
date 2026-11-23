@@ -4,6 +4,7 @@ module.exports = {
     "./app/**/*.{js,jsx,ts,tsx}",
     "./components/**/*.{js,jsx,ts,tsx}",
     "./features/**/*.{js,jsx,ts,tsx}",
+    "./*.{js,jsx,ts,tsx}",
   ],
   presets: [require("nativewind/preset")],
   theme: {
@@ -22,6 +23,9 @@ module.exports = {
           900: "#240046",
           950: "#10002b",
         },
+        primary: "#7B2CBF",
+        ink: "#404040",
+        muted: "#A3A3A3",
       },
       fontFamily: {
         jakarta: ["PlusJakartaSans_400Regular"],
@@ -29,6 +33,9 @@ module.exports = {
         "jakarta-semibold": ["PlusJakartaSans_600SemiBold"],
         "jakarta-bold": ["PlusJakartaSans_700Bold"],
         "jakarta-extrabold": ["PlusJakartaSans_800ExtraBold"],
+        rubik: ["Rubik_400Regular"],
+        "rubik-medium": ["Rubik_500Medium"],
+        "rubik-bold": ["Rubik_700Bold"],
       },
     },
   },
