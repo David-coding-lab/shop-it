@@ -1,39 +1,49 @@
-import { useState } from "react";
-import { Text, View } from "react-native";
+import { MaterialIcons } from "@expo/vector-icons";
 import { Link } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { useRef, useState } from "react";
+import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-native";
+import type { ComponentRef } from "react";
 
-import { Button } from "@/components/ui/Button";
-import { TextField } from "@/components/ui/TextField";
+import UnderlineField, { colors } from "@/components/ui/UnderlineField";
 import { useAuth } from "@/features/auth/use-auth";
 import { isValidEmail, validatePassword } from "@/lib/validation";
 
-export function SignUpForm() {
+type Props = {
+  onConfirmationSent: (email: string) => void;
+};
+
+const isValidPhone = (value: string) => /^\+?[0-9\s\-()]{7,18}$/.test(value.trim());
+
+export function SignUpForm({ onConfirmationSent }: Props) {
   const { signUp } = useAuth();
-  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [fieldErrors, setFieldErrors] = useState<Record<string, string | null>>({});
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isConfirmationSent, setIsConfirmationSent] = useState(false);
+
+  const phoneRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const confirmRef = useRef<ComponentRef<typeof TextInput>>(null);
 
   async function handleSubmit() {
+    if (isSubmitting) return;
     setAuthError(null);
 
     const trimmedEmail = email.trim();
-    const passwordIssue = validatePassword(password);
     const errors = {
       email: isValidEmail(trimmedEmail) ? null : "Enter a valid email address.",
-      password: passwordIssue,
+      phone: isValidPhone(phone) ? null : "Enter a valid phone number.",
+      password: validatePassword(password),
       confirm: confirm === password ? null : "Passwords do not match.",
     };
     setFieldErrors(errors);
     if (Object.values(errors).some(Boolean)) return;
 
     setIsSubmitting(true);
-    const result = await signUp(trimmedEmail, password, fullName);
+    const result = await signUp(trimmedEmail, password, phone.trim());
     setIsSubmitting(false);
 
     if (result.error) {
@@ -41,86 +51,100 @@ export function SignUpForm() {
       return;
     }
     if (result.needsConfirmation) {
-      setIsConfirmationSent(true);
+      onConfirmationSent(trimmedEmail);
     }
   }
 
-  if (isConfirmationSent) {
-    return (
-      <View className="items-center gap-4 rounded-2xl border border-emerald-200 bg-emerald-50 p-6 dark:border-emerald-900 dark:bg-emerald-950">
-        <Ionicons name="mail-outline" size={40} color="#059669" />
-        <Text className="text-center text-lg font-jakarta-semibold text-emerald-800 dark:text-emerald-200">
-          Check your email
-        </Text>
-        <Text className="text-center text-sm font-jakarta text-emerald-700 dark:text-emerald-300">
-          We sent a confirmation link to {email.trim()}. Confirm it, then sign in.
-        </Text>
-        <Link href="/sign-in" className="font-jakarta-semibold text-brand-600 dark:text-brand-300">
-          Back to sign in
-        </Link>
-      </View>
-    );
-  }
-
   return (
-    <View className="gap-4">
-      <TextField
-        label="Full name"
-        value={fullName}
-        onChangeText={setFullName}
-        placeholder="Ada Lovelace"
-        autoComplete="name"
-        textContentType="name"
-        autoCapitalize="words"
-      />
-      <TextField
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-        error={fieldErrors.email}
-        placeholder="you@example.com"
-        keyboardType="email-address"
-        autoComplete="email"
-        autoCapitalize="none"
-        textContentType="emailAddress"
-      />
-      <TextField
-        label="Password"
-        value={password}
-        onChangeText={setPassword}
-        error={fieldErrors.password}
-        placeholder="At least 8 characters"
-        autoComplete="new-password"
-        secureTextEntry
-      />
-      <TextField
-        label="Confirm password"
-        value={confirm}
-        onChangeText={setConfirm}
-        error={fieldErrors.confirm}
-        placeholder="Repeat your password"
-        autoComplete="new-password"
-        secureTextEntry
-      />
+    <View className="flex-grow justify-between">
+      <View className="gap-7">
+        <UnderlineField
+          label="Email"
+          icon="mail-outline"
+          value={email}
+          onChangeText={setEmail}
+          error={fieldErrors.email}
+          placeholder="demo@email.com"
+          keyboardType="email-address"
+          autoComplete="email"
+          autoCapitalize="none"
+          textContentType="emailAddress"
+          returnKeyType="next"
+          onSubmitEditing={() => phoneRef.current?.focus()}
+        />
+        <UnderlineField
+          ref={phoneRef}
+          label="Phone"
+          icon="phone"
+          value={phone}
+          onChangeText={setPhone}
+          error={fieldErrors.phone}
+          placeholder="+91-0123456789"
+          keyboardType="phone-pad"
+          autoComplete="tel"
+          textContentType="telephoneNumber"
+          returnKeyType="next"
+          onSubmitEditing={() => passwordRef.current?.focus()}
+        />
+        <UnderlineField
+          ref={passwordRef}
+          label="Password"
+          icon="lock-outline"
+          password
+          value={password}
+          onChangeText={setPassword}
+          error={fieldErrors.password}
+          placeholder="**********"
+          autoComplete="new-password"
+          autoCapitalize="none"
+          returnKeyType="next"
+          onSubmitEditing={() => confirmRef.current?.focus()}
+        />
+        <UnderlineField
+          ref={confirmRef}
+          label="Confirm Password"
+          icon="lock-outline"
+          password
+          value={confirm}
+          onChangeText={setConfirm}
+          error={fieldErrors.confirm}
+          placeholder="**********"
+          autoComplete="new-password"
+          autoCapitalize="none"
+          returnKeyType="done"
+          onSubmitEditing={handleSubmit}
+        />
 
-      {authError ? (
-        <View className="flex-row items-center gap-2 rounded-2xl bg-red-50 px-4 py-3 dark:bg-red-950">
-          <Ionicons name="alert-circle" size={18} color="#dc2626" />
-          <Text className="flex-1 text-sm font-jakarta-medium text-red-700 dark:text-red-300">
-            {authError}
-          </Text>
+        {authError ? (
+          <View className="flex-row items-center gap-2 rounded-xl bg-red-50 px-3.5 py-2.5">
+            <MaterialIcons name="error-outline" size={18} color={colors.error} />
+            <Text className="flex-1 text-sm font-jakarta-medium text-red-700">{authError}</Text>
+          </View>
+        ) : null}
+      </View>
+
+      <View className="gap-4 pt-8">
+        <Pressable
+          onPress={handleSubmit}
+          disabled={isSubmitting}
+          accessibilityRole="button"
+          className={`h-[52px] items-center justify-center rounded-[10px] bg-brand-600 ${
+            isSubmitting ? "opacity-80" : "active:opacity-90"
+          }`}
+        >
+          {isSubmitting ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text className="text-base font-jakarta-semibold text-white">Sign up</Text>
+          )}
+        </Pressable>
+
+        <View className="flex-row justify-center gap-1.5">
+          <Text className="font-jakarta text-base text-neutral-500">Already have an Account!</Text>
+          <Link href="/sign-in" className="font-jakarta-semibold text-base text-brand-600">
+            Sign in
+          </Link>
         </View>
-      ) : null}
-
-      <Button title="Create account" onPress={handleSubmit} loading={isSubmitting} />
-
-      <View className="flex-row justify-center gap-1">
-        <Text className="font-jakarta text-neutral-500 dark:text-neutral-400">
-          Already have an account?
-        </Text>
-        <Link href="/sign-in" className="font-jakarta-semibold text-brand-600 dark:text-brand-300">
-          Sign in
-        </Link>
       </View>
     </View>
   );

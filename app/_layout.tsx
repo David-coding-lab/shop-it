@@ -12,6 +12,11 @@ import {
   PlusJakartaSans_700Bold,
   PlusJakartaSans_800ExtraBold,
 } from "@expo-google-fonts/plus-jakarta-sans";
+import {
+  Rubik_400Regular,
+  Rubik_500Medium,
+  Rubik_700Bold,
+} from "@expo-google-fonts/rubik";
 
 import { AuthProvider } from "@/features/auth/AuthProvider";
 import { useAuth } from "@/features/auth/use-auth";
@@ -31,6 +36,9 @@ function RootNavigator() {
     PlusJakartaSans_600SemiBold,
     PlusJakartaSans_700Bold,
     PlusJakartaSans_800ExtraBold,
+    Rubik_400Regular,
+    Rubik_500Medium,
+    Rubik_700Bold,
   });
   const isReady = !isAuthLoading && !isOnboardingLoading && fontsLoaded;
 
@@ -39,10 +47,6 @@ function RootNavigator() {
       void SplashScreen.hideAsync().catch(() => undefined);
     }
   }, [isReady]);
-
-  if (!isReady) {
-    return null;
-  }
 
   return (
     <Stack screenOptions={{ headerShown: false }}>

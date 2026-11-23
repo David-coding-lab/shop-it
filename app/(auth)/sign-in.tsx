@@ -1,30 +1,50 @@
-import { Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StatusBar } from "expo-status-bar";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { KeyboardScroll } from "@/components/layout/KeyboardScroll";
-import { Screen } from "@/components/layout/Screen";
+import WaveHeader, { waveHeight } from "@/components/WaveHeader";
 import { SignInForm } from "@/features/auth/components/SignInForm";
 
 export default function SignInScreen() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const headerH = waveHeight("signin", width);
+  const titleTop = headerH - (62 / 393) * width;
+
   return (
-    <Screen>
-      <KeyboardScroll>
-        <View className="mb-8 items-center gap-3">
-          <View className="h-16 w-16 items-center justify-center rounded-3xl bg-brand-600">
-            <Ionicons name="storefront" size={32} color="#ffffff" />
+    <View className="flex-1 bg-white">
+      <StatusBar style="light" />
+      <WaveHeader variant="signin" />
+
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 20,
+            paddingTop: titleTop,
+            paddingBottom: Math.max(insets.bottom, 16) + 8,
+          }}
+        >
+          <Text className="self-start font-rubik-bold text-[40px] leading-[48px] text-ink underline decoration-primary">
+            Sign in
+          </Text>
+          <View className="mt-9 flex-1">
+            <SignInForm />
           </View>
-          <Text className="text-sm font-jakarta-semibold uppercase tracking-widest text-brand-600 dark:text-brand-300">
-            Shop-it
-          </Text>
-          <Text className="text-center text-3xl font-jakarta-bold text-neutral-900 dark:text-neutral-50">
-            Welcome back
-          </Text>
-          <Text className="text-center text-base font-jakarta text-neutral-500 dark:text-neutral-400">
-            Sign in to your account
-          </Text>
-        </View>
-        <SignInForm />
-      </KeyboardScroll>
-    </Screen>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }

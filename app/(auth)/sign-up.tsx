@@ -1,30 +1,64 @@
-import { Text, View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { Rubik_400Regular, Rubik_500Medium, Rubik_700Bold, useFonts } from "@expo-google-fonts/rubik";
+import { StatusBar } from "expo-status-bar";
+import { useState } from "react";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
+  useWindowDimensions,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
-import { KeyboardScroll } from "@/components/layout/KeyboardScroll";
-import { Screen } from "@/components/layout/Screen";
+import WaveHeader, { waveHeight } from "@/components/WaveHeader";
+import { EmailSent } from "@/features/auth/components/EmailSent";
 import { SignUpForm } from "@/features/auth/components/SignUpForm";
 
 export default function SignUpScreen() {
+  const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const [fontsLoaded] = useFonts({ Rubik_400Regular, Rubik_500Medium, Rubik_700Bold });
+  const [sentTo, setSentTo] = useState<string | null>(null);
+
+  if (!fontsLoaded) return null;
+
+  const headerH = waveHeight("form", width);
+  const titleTop = (228 / 290) * headerH;
+
   return (
-    <Screen>
-      <KeyboardScroll>
-        <View className="mb-8 items-center gap-3">
-          <View className="h-16 w-16 items-center justify-center rounded-3xl bg-brand-600">
-            <Ionicons name="storefront" size={32} color="#ffffff" />
-          </View>
-          <Text className="text-sm font-jakarta-semibold uppercase tracking-widest text-brand-600 dark:text-brand-300">
-            Shop-it
-          </Text>
-          <Text className="text-center text-3xl font-jakarta-bold text-neutral-900 dark:text-neutral-50">
-            Create account
-          </Text>
-          <Text className="text-center text-base font-jakarta text-neutral-500 dark:text-neutral-400">
-            Join Shop-it to book trusted professionals near you
-          </Text>
-        </View>
-        <SignUpForm />
-      </KeyboardScroll>
-    </Screen>
+    <View className="flex-1 bg-white">
+      <StatusBar style="light" />
+      <WaveHeader variant="form" />
+
+      <KeyboardAvoidingView
+        className="flex-1"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+      >
+        <ScrollView
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{
+            flexGrow: 1,
+            paddingHorizontal: 20,
+            paddingTop: sentTo ? headerH + 8 : titleTop,
+            paddingBottom: Math.max(insets.bottom, 16) + 8,
+          }}
+        >
+          {sentTo ? (
+            <EmailSent email={sentTo} />
+          ) : (
+            <>
+              <Text className="self-start text-[40px] leading-[48px] font-jakarta-bold text-neutral-700 underline decoration-brand-600">
+                Sign up
+              </Text>
+              <View className="mt-9 flex-grow">
+                <SignUpForm onConfirmationSent={setSentTo} />
+              </View>
+            </>
+          )}
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
