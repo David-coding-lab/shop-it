@@ -141,7 +141,7 @@ export function SignUpForm({ onConfirmationSent }: Props) {
 
         <View className="flex-row justify-center gap-1.5">
           <Text className="font-jakarta text-base text-neutral-500">Already have an Account!</Text>
-          <Link href="/sign-in" className="font-jakarta-semibold text-base text-brand-600">
+          <Link replace href="/sign-in" className="font-jakarta-semibold text-base text-brand-600">
             Sign in
           </Link>
         </View>

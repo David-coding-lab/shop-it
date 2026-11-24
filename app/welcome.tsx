@@ -1,10 +1,3 @@
-import {
-  Rubik_400Regular,
-  Rubik_500Medium,
-  Rubik_700Bold,
-  useFonts,
-} from "@expo-google-fonts/rubik";
-import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { Pressable, StyleSheet, Text, View, useWindowDimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -14,7 +7,6 @@ import OnboardingBackground, {
   BG_HEIGHT,
   BG_WIDTH,
 } from "@/features/onboarding/components/OnboardingBackground";
-import { useAuth } from "@/features/auth/use-auth";
 import { useOnboarding } from "@/features/onboarding/use-onboarding";
 
 export const colors = {
@@ -26,14 +18,9 @@ export const colors = {
 };
 
 export default function WelcomeScreen() {
-  const router = useRouter();
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
-  const { session } = useAuth();
   const { completeWelcome } = useOnboarding();
-  const [fontsLoaded] = useFonts({ Rubik_400Regular, Rubik_500Medium, Rubik_700Bold });
-
-  if (!fontsLoaded) return null;
 
   const bgHeight = (width * BG_HEIGHT) / BG_WIDTH;
 

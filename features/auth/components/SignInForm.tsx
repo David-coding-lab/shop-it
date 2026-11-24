@@ -117,7 +117,7 @@ export function SignInForm() {
 
         <View className="flex-row justify-center gap-1.5">
           <Text className="font-rubik text-base text-neutral-500">Don’t have an Account ?</Text>
-          <Link href="/sign-up" className="font-rubik-medium text-base text-primary">
+          <Link replace href="/sign-up" className="font-rubik-medium text-base text-primary">
             Sign up
           </Link>
         </View>

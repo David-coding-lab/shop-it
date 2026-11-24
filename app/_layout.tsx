@@ -50,14 +50,22 @@ function RootNavigator() {
 
   return (
     <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="index" />
-      <Stack.Protected guard={isReady && !session && !hasSeenWelcome}>
+      <Stack.Protected
+        guard={!session && !hasSeenWelcome}
+        redirectTo={session ? "/" : "/sign-in"}
+      >
         <Stack.Screen name="welcome" />
       </Stack.Protected>
-      <Stack.Protected guard={isReady && !session && hasSeenWelcome}>
+      <Stack.Protected
+        guard={!session && hasSeenWelcome}
+        redirectTo={session ? "/" : "/welcome"}
+      >
         <Stack.Screen name="(auth)" />
       </Stack.Protected>
-      <Stack.Protected guard={isReady && Boolean(session)}>
+      <Stack.Protected
+        guard={Boolean(session)}
+        redirectTo={hasSeenWelcome ? "/sign-in" : "/welcome"}
+      >
         <Stack.Screen name="(app)" />
       </Stack.Protected>
     </Stack>

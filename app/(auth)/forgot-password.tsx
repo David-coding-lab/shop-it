@@ -16,6 +16,7 @@ export default function ForgotPasswordScreen() {
             Password reset is coming soon.
           </Text>
           <Link
+            replace
             href="/sign-in"
             className="mt-2 font-jakarta-semibold text-brand-600 dark:text-brand-300"
           >
