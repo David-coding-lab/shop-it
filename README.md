@@ -155,6 +155,8 @@ Milestones are built one at a time, each ending green (`lint` + `typecheck`):
 ## Security notes
 
 - All secrets stay server-side: `PAYSTACK_SECRET_KEY` and `SUPABASE_SERVICE_ROLE_KEY` live only in Edge Function secrets. The app ships with the anon key, which is safe **because** RLS is enforced on every table.
+- User input is validated in the app with Zod (`lib/validation.ts` plus per-feature schemas) and enforced again by database CHECK constraints. Client validation is UX and defense-in-depth; RLS and database constraints are the security boundary.
+- Auth rate limits and CAPTCHA are configured in the Supabase dashboard, not in the app. Client-side cooldowns are UX only and can be bypassed.
 - Payment status is confirmed server-side via the webhook (HMAC-SHA512 signature on the raw body + `transaction/verify`), never via the client-side WebView redirect.
 - Booking `status` cannot be set directly by any client — transitions go through `transition_booking()` with a legal-move map and row lock.
 - Provider coordinates are stored for distance math but never returned to clients.

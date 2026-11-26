@@ -3,6 +3,7 @@ import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import EmailIllustration from "@/components/EmailIllustration";
 import { useAuth } from "@/features/auth/use-auth";
+import { emailSchema, firstErrorMessage } from "@/lib/validation";
 
 export type EmailSentMode = "signup" | "reset";
 
@@ -45,10 +46,16 @@ export function EmailSent({
   const handleResend = useCallback(async () => {
     if (!canResend) return;
     setError(null);
-    setIsSending(true);
 
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      setError(firstErrorMessage(parsed.error));
+      return;
+    }
+
+    setIsSending(true);
     const result =
-      mode === "reset" ? await resetPassword(email) : await resendConfirmation(email);
+      mode === "reset" ? await resetPassword(parsed.data) : await resendConfirmation(parsed.data);
     setIsSending(false);
 
     if (result.error) {
@@ -71,7 +78,7 @@ export function EmailSent({
         </Text>
         <Text className="mt-3 max-w-[300px] text-center font-rubik text-[14.5px] leading-5 text-muted">
           {prefix}
-          <Text className="font-rubik-medium text-ink">{email}</Text>
+          <Text className="font-rubik-medium text-ink">{email.trim() || "your email"}</Text>
           {suffix}
         </Text>
       </View>

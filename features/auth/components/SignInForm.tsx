@@ -5,8 +5,13 @@ import { ActivityIndicator, Pressable, Text, TextInput, View } from "react-nativ
 import type { ComponentRef } from "react";
 
 import UnderlineField, { colors } from "@/components/ui/UnderlineField";
+import { signInSchema } from "@/features/auth/auth-schemas";
 import { useAuth } from "@/features/auth/use-auth";
-import { isValidEmail } from "@/lib/validation";
+import { useCooldown } from "@/features/auth/use-cooldown";
+import { EMAIL_MAX_LENGTH, toFieldErrors } from "@/lib/validation";
+
+const MAX_FAILED_ATTEMPTS = 5;
+const COOLDOWN_SECONDS = 30;
 
 export function SignInForm() {
   const { signIn } = useAuth();
@@ -16,26 +21,46 @@ export function SignInForm() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [authError, setAuthError] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { secondsLeft, isCoolingDown, start: startCooldown } = useCooldown(COOLDOWN_SECONDS);
 
   const passwordRef = useRef<ComponentRef<typeof TextInput>>(null);
+  const isDisabled = isSubmitting || isCoolingDown;
 
   async function handleSubmit() {
-    if (isSubmitting) return;
+    if (isDisabled) return;
     setAuthError(null);
 
-    const trimmedEmail = email.trim();
-    const emailValid = isValidEmail(trimmedEmail);
-    const passwordValid = password.length > 0;
-    setEmailError(emailValid ? null : "Enter a valid email address.");
-    setPasswordError(passwordValid ? null : "Enter your password.");
-    if (!emailValid || !passwordValid) return;
+    const parsed = signInSchema.safeParse({ email, password });
+    if (!parsed.success) {
+      const errors = toFieldErrors(parsed.error);
+      setEmailError(errors.email ?? null);
+      setPasswordError(errors.password ?? null);
+      return;
+    }
+
+    setEmailError(null);
+    setPasswordError(null);
 
     setIsSubmitting(true);
-    const { error } = await signIn(trimmedEmail, password);
+    const { error } = await signIn(parsed.data);
     setIsSubmitting(false);
 
-    if (error) setAuthError(error);
+    if (error) {
+      setAuthError(error);
+      const nextAttempts = failedAttempts + 1;
+
+      if (nextAttempts >= MAX_FAILED_ATTEMPTS) {
+        setFailedAttempts(0);
+        startCooldown();
+      } else {
+        setFailedAttempts(nextAttempts);
+      }
+      return;
+    }
+
+    setFailedAttempts(0);
   }
 
   return (
@@ -52,6 +77,7 @@ export function SignInForm() {
           autoComplete="email"
           autoCapitalize="none"
           textContentType="emailAddress"
+          maxLength={EMAIL_MAX_LENGTH}
           returnKeyType="next"
           onSubmitEditing={() => passwordRef.current?.focus()}
         />
@@ -102,16 +128,19 @@ export function SignInForm() {
       <View className="gap-[18px] pt-8">
         <Pressable
           onPress={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isDisabled}
           accessibilityRole="button"
+          accessibilityState={{ disabled: isDisabled }}
           className={`h-[52px] items-center justify-center rounded-[10px] bg-primary ${
-            isSubmitting ? "opacity-80" : "active:opacity-90"
+            isDisabled ? "opacity-80" : "active:opacity-90"
           }`}
         >
           {isSubmitting ? (
             <ActivityIndicator color="#fff" />
           ) : (
-            <Text className="font-rubik-medium text-[19px] text-white">Sign in</Text>
+            <Text className="font-rubik-medium text-[19px] text-white">
+              {isCoolingDown ? `Try again in ${secondsLeft}s` : "Sign in"}
+            </Text>
           )}
         </Pressable>
 

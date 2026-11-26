@@ -5,6 +5,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { EmailSent } from "@/features/auth/components/EmailSent";
 import type { EmailSentMode } from "@/features/auth/components/EmailSent";
+import { emailSchema } from "@/lib/validation";
 
 export default function CheckEmailScreen() {
   const { email, mode } = useLocalSearchParams<{ email?: string; mode?: string }>();
@@ -13,6 +14,8 @@ export default function CheckEmailScreen() {
 
   const emailMode: EmailSentMode = mode === "reset" ? "reset" : "signup";
   const isReset = emailMode === "reset";
+  const parsedEmail = emailSchema.safeParse(email ?? "");
+  const safeEmail = parsedEmail.success ? parsedEmail.data : "";
 
   return (
     <View className="flex-1 bg-white">
@@ -29,7 +32,7 @@ export default function CheckEmailScreen() {
         }}
       >
         <EmailSent
-          email={email ?? ""}
+          email={safeEmail}
           mode={emailMode}
           messagePrefix={isReset ? "We sent a reset link to " : undefined}
           messageSuffix={

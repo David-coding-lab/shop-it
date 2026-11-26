@@ -3,7 +3,7 @@ import { useState } from "react";
 import { ActivityIndicator, Pressable, Text, View } from "react-native";
 
 import UnderlineField, { colors } from "@/components/ui/UnderlineField";
-import { isValidEmail } from "@/lib/validation";
+import { EMAIL_MAX_LENGTH, emailSchema, firstErrorMessage } from "@/lib/validation";
 
 type Props = {
   /** Sends the reset email. Return `{ error }` to show a message under the form. */
@@ -22,20 +22,22 @@ export function ForgotPasswordForm({ onSendCode, onSent }: Props) {
     if (isSubmitting) return;
     setAuthError(null);
 
-    const trimmedEmail = email.trim();
-    const valid = isValidEmail(trimmedEmail);
-    setEmailError(valid ? null : "Enter a valid email address.");
-    if (!valid) return;
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      setEmailError(firstErrorMessage(parsed.error));
+      return;
+    }
 
+    setEmailError(null);
     setIsSubmitting(true);
-    const { error } = await onSendCode(trimmedEmail);
+    const { error } = await onSendCode(parsed.data);
     setIsSubmitting(false);
 
     if (error) {
       setAuthError(error);
       return;
     }
-    onSent(trimmedEmail);
+    onSent(parsed.data);
   }
 
   return (
@@ -52,6 +54,7 @@ export function ForgotPasswordForm({ onSendCode, onSent }: Props) {
           autoComplete="email"
           autoCapitalize="none"
           textContentType="emailAddress"
+          maxLength={EMAIL_MAX_LENGTH}
           returnKeyType="send"
           onSubmitEditing={handleSubmit}
         />

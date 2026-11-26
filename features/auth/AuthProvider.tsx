@@ -4,6 +4,9 @@ import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/lib/supabase";
 import { AuthContext } from "@/features/auth/auth-context";
+import { signInSchema, signUpPayloadSchema } from "@/features/auth/auth-schemas";
+import type { SignInInput, SignUpInput } from "@/features/auth/auth-schemas";
+import { emailSchema, firstErrorMessage } from "@/lib/validation";
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
@@ -39,18 +42,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+  const signIn = useCallback(async (input: SignInInput) => {
+    const parsed = signInSchema.safeParse(input);
+    if (!parsed.success) {
+      return { error: firstErrorMessage(parsed.error) };
+    }
+
+    const { error } = await supabase.auth.signInWithPassword(parsed.data);
     return { error: error?.message ?? null };
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string, fullName: string) => {
-    const trimmedName = fullName.trim();
+  const signUp = useCallback(async (input: SignUpInput) => {
+    const parsed = signUpPayloadSchema.safeParse(input);
+    if (!parsed.success) {
+      return { error: firstErrorMessage(parsed.error), needsConfirmation: false };
+    }
+
+    const { email, password, fullName, phone } = parsed.data;
     const { data, error } = await supabase.auth.signUp({
-      email: email.trim(),
+      email,
       password,
       options: {
-        data: { full_name: trimmedName.length > 0 ? trimmedName : null },
+        data: { full_name: fullName, phone },
       },
     });
     return {
@@ -64,12 +77,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const resetPassword = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email.trim());
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      return { error: firstErrorMessage(parsed.error) };
+    }
+
+    const { error } = await supabase.auth.resetPasswordForEmail(parsed.data);
     return { error: error?.message ?? null };
   }, []);
 
   const resendConfirmation = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resend({ type: "signup", email: email.trim() });
+    const parsed = emailSchema.safeParse(email);
+    if (!parsed.success) {
+      return { error: firstErrorMessage(parsed.error) };
+    }
+
+    const { error } = await supabase.auth.resend({ type: "signup", email: parsed.data });
     return { error: error?.message ?? null };
   }, []);
 

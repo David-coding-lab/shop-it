@@ -2,7 +2,12 @@ import { useCallback, useEffect, useState } from "react";
 
 import { supabase } from "@/lib/supabase";
 import { useAuth } from "@/features/auth/use-auth";
-import type { Profile, ProfileUpdate } from "@/types/database.types";
+import {
+  profileUpdateSchema,
+  type ProfileUpdateInput,
+} from "@/features/profile/profile-schemas";
+import { firstErrorMessage } from "@/lib/validation";
+import type { Profile } from "@/types/database.types";
 
 type ProfileResult = { profile: Profile | null; error: string | null };
 
@@ -56,14 +61,19 @@ export function useProfile() {
   }, [userId]);
 
   const updateProfile = useCallback(
-    async (updates: ProfileUpdate) => {
+    async (updates: ProfileUpdateInput) => {
       if (!userId) return { error: "Not signed in." };
+
+      const parsed = profileUpdateSchema.safeParse(updates);
+      if (!parsed.success) {
+        return { error: firstErrorMessage(parsed.error) };
+      }
 
       setIsSaving(true);
       setError(null);
       const { data, error: updateError } = await supabase
         .from("profiles")
-        .update(updates)
+        .update(parsed.data)
         .eq("id", userId)
         .select()
         .single();

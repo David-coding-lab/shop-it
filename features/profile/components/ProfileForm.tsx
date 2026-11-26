@@ -5,8 +5,17 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { TextField } from "@/components/ui/TextField";
 import { Spinner } from "@/components/ui/Spinner";
+import {
+  profileUpdateSchema,
+  type ProfileUpdateInput,
+} from "@/features/profile/profile-schemas";
 import type { ProfileState } from "@/features/profile/profile-state";
-import type { Profile, ProfileUpdate } from "@/types/database.types";
+import {
+  AVATAR_URL_MAX_LENGTH,
+  FULL_NAME_MAX_LENGTH,
+  toFieldErrors,
+} from "@/lib/validation";
+import type { Profile } from "@/types/database.types";
 
 export function ProfileForm({ profileState }: { profileState: ProfileState }) {
   const { profile, isLoading, isSaving, error, updateProfile } = profileState;
@@ -30,12 +39,13 @@ type ProfileFormFieldsProps = {
   profile: Profile | null;
   isSaving: boolean;
   loadError: string | null;
-  onSave: (updates: ProfileUpdate) => Promise<{ error: string | null }>;
+  onSave: (updates: ProfileUpdateInput) => Promise<{ error: string | null }>;
 };
 
 function ProfileFormFields({ profile, isSaving, loadError, onSave }: ProfileFormFieldsProps) {
   const [fullName, setFullName] = useState(profile?.full_name ?? "");
   const [avatarUrl, setAvatarUrl] = useState(profile?.avatar_url ?? "");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isSaved, setIsSaved] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -43,16 +53,17 @@ function ProfileFormFields({ profile, isSaving, loadError, onSave }: ProfileForm
     setFormError(null);
     setIsSaved(false);
 
-    const trimmedAvatar = avatarUrl.trim();
-    if (trimmedAvatar && !/^https?:\/\/.+/i.test(trimmedAvatar)) {
-      setFormError("Avatar URL must start with http:// or https://");
+    const parsed = profileUpdateSchema.safeParse({
+      full_name: fullName,
+      avatar_url: avatarUrl,
+    });
+    if (!parsed.success) {
+      setFieldErrors(toFieldErrors(parsed.error));
       return;
     }
 
-    const result = await onSave({
-      full_name: fullName.trim() || null,
-      avatar_url: trimmedAvatar || null,
-    });
+    setFieldErrors({});
+    const result = await onSave(parsed.data);
 
     if (result.error) {
       setFormError(result.error);
@@ -73,19 +84,23 @@ function ProfileFormFields({ profile, isSaving, loadError, onSave }: ProfileForm
         label="Full name"
         value={fullName}
         onChangeText={setFullName}
+        error={fieldErrors.full_name}
         placeholder="Ada Lovelace"
         autoComplete="name"
         textContentType="name"
         autoCapitalize="words"
+        maxLength={FULL_NAME_MAX_LENGTH}
       />
       <TextField
         label="Avatar URL"
         value={avatarUrl}
         onChangeText={setAvatarUrl}
+        error={fieldErrors.avatar_url}
         placeholder="https://example.com/avatar.png"
         keyboardType="url"
         autoCapitalize="none"
         autoCorrect={false}
+        maxLength={AVATAR_URL_MAX_LENGTH}
       />
 
       {visibleError ? (
