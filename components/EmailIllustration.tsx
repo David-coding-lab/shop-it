@@ -1,23 +1,26 @@
-import Svg, { Circle, G, Path, Rect } from "react-native-svg";
+import { Image, ImageStyle, StyleProp } from "react-native";
+
+// The artwork is the exact 264x256 window of your clipped SVG (the paper plane sticks out to the
+// right, so the frame is wider than the envelope). The envelope's centre sits at ~37.2% of the
+// frame, so the image is nudged right to put the envelope, not the frame, in the middle.
+const ASPECT_RATIO = 264 / 256;
+const ENVELOPE_CENTER = 98.25 / 264;
 
 type Props = {
   width?: number;
+  style?: StyleProp<ImageStyle>;
 };
 
-export default function EmailIllustration({ width = 220 }: Props) {
-  const height = (width * 180) / 220;
-
+export default function EmailIllustration({ width = 264, style }: Props) {
   return (
-    <Svg width={width} height={height} viewBox="0 0 220 180" fill="none">
-      <Circle cx="110" cy="96" r="72" fill="#F3E8FF" />
-      <Rect x="46" y="66" width="128" height="84" rx="12" fill="#FFFFFF" stroke="#7B2CBF" strokeWidth="4" />
-      <Path d="M52 72L110 118L168 72" stroke="#7B2CBF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      <Path d="M52 144L91 110" stroke="#C084FC" strokeWidth="4" strokeLinecap="round" />
-      <Path d="M168 144L129 110" stroke="#C084FC" strokeWidth="4" strokeLinecap="round" />
-      <G opacity="0.9">
-        <Circle cx="162" cy="52" r="18" fill="#7B2CBF" />
-        <Path d="M154 52L160 58L170 46" stroke="#FFFFFF" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
-      </G>
-    </Svg>
+    <Image
+      source={require("../assets/email-sent-plane.png")}
+      accessibilityLabel="Email with a paper plane"
+      resizeMode="contain"
+      style={[
+        { width, height: width / ASPECT_RATIO, transform: [{ translateX: (0.5 - ENVELOPE_CENTER) * width }] },
+        style,
+      ]}
+    />
   );
 }

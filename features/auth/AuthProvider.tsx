@@ -68,6 +68,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: error?.message ?? null };
   }, []);
 
+  const resendConfirmation = useCallback(async (email: string) => {
+    const { error } = await supabase.auth.resend({ type: "signup", email: email.trim() });
+    return { error: error?.message ?? null };
+  }, []);
+
   const value = useMemo(
     () => ({
       session,
@@ -77,8 +82,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       signUp,
       signOut,
       resetPassword,
+      resendConfirmation,
     }),
-    [session, isLoading, signIn, signUp, signOut, resetPassword],
+    [session, isLoading, signIn, signUp, signOut, resetPassword, resendConfirmation],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

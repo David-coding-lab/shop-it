@@ -17,7 +17,7 @@ import { SignUpForm } from "@/features/auth/components/SignUpForm";
 
 export default function SignUpScreen() {
   const insets = useSafeAreaInsets();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
   const [fontsLoaded] = useFonts({ Rubik_400Regular, Rubik_500Medium, Rubik_700Bold });
   const [sentTo, setSentTo] = useState<string | null>(null);
 
@@ -28,8 +28,8 @@ export default function SignUpScreen() {
 
   return (
     <View className="flex-1 bg-white">
-      <StatusBar style="light" />
-      <WaveHeader variant="form" />
+      <StatusBar style={sentTo ? "dark" : "light"} />
+      {sentTo ? null : <WaveHeader variant="form" />}
 
       <KeyboardAvoidingView
         className="flex-1"
@@ -41,8 +41,10 @@ export default function SignUpScreen() {
           contentContainerStyle={{
             flexGrow: 1,
             paddingHorizontal: 20,
-            paddingTop: sentTo ? headerH + 8 : titleTop,
-            paddingBottom: Math.max(insets.bottom, 16) + 8,
+            paddingTop: sentTo ? Math.max(insets.top + 24, height * 0.2535) : titleTop,
+            paddingBottom: sentTo
+              ? Math.max(insets.bottom + 2, 18)
+              : Math.max(insets.bottom, 16) + 8,
           }}
         >
           {sentTo ? (

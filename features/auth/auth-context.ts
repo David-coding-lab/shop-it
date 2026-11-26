@@ -13,6 +13,7 @@ export type AuthContextValue = {
   signUp: (email: string, password: string, fullName: string) => Promise<SignUpResult>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<AuthResult>;
+  resendConfirmation: (email: string) => Promise<AuthResult>;
 };
 
 export const AuthContext = createContext<AuthContextValue | undefined>(undefined);

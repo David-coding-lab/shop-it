@@ -9,7 +9,7 @@ const TEXTURE = require("../assets/images/contours.png");
 const TEXTURE_W = 625;
 const TEXTURE_H = 632;
 
-export type WaveVariant = "welcome" | "form" | "signin";
+export type WaveVariant = "welcome" | "form" | "signin" | "forgot";
 
 const VARIANTS = {
   welcome: {
@@ -41,6 +41,16 @@ const VARIANTS = {
     icons: [
       [2, -185, -48],
       [0, 185, -15],
+    ] as [number, number, number][],
+  },
+  forgot: {
+    height: 370,
+    shape:
+      "M0 273C38 265 62 260 82 261C130 263 180 284 214 316C248 348 288 370 322 368C352 366 376 356 393 345V0H0Z",
+    texture: { x: -110, y: -202 },
+    icons: [
+      [0, -30, -200],
+      [2, -5, -45],
     ] as [number, number, number][],
   },
 };
